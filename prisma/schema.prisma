@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // provider = "postgresql"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// RELACION 1 A N DE PLANTA A PACIENTE
+model Planta {
+  id          Int        @id @default(autoincrement())
+  nombre      String
+  jefe_planta String
+  // PREGUNTAR DUDA DE CREATEAT
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  pacientes   Paciente[] //ARRAY EN EL 1
+
+  @@map("plantas")
+}
+
+model Paciente {
+  id               Int        @id @default(autoincrement())
+  nombre           String
+  fecha_nacimiento DateTime
+  plantaId         Int? //LLAVE FORANEA EN EL N
+  planta           Planta?    @relation(fields: [plantaId], references: [id]) //RELACION EN EL N
+  medicinas        Medicina[] //ARRAY DEL N DE MEDICINA
+
+  @@map("pacientes")
+}
+
+//  RELACION N A N CON PACIENTE Y MEDICINA POR LO QUE SE PONE EL ARRAY EN LOS DOS Y CREA UNA RELACION
+model Medicina {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  via       String
+  pacientes Paciente[] //ARRAY DEL N DE PACIENTE
+
+  @@map("medicinas")
+}
